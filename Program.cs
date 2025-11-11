@@ -1,60 +1,63 @@
-﻿namespace DSA_Stack;
+﻿using System.Text;
+
+namespace DSA_Stack;
 
 public class Program
 {
     public static void Main(string[] args)
     {
+        Console.WriteLine("Valid Parenthesis Problem:");
+        Console.WriteLine($"Test Case 1: [{{()}}]");
+        Console.WriteLine("Expected: True.");
+        Console.WriteLine($"Actual: {ValidateParenthesis("[{()}]")}.");
 
-        try
-        {
-            Console.WriteLine("=== Testing LinkedStack<int> ===");
-            LinkedStack<int> intStack = new LinkedStack<int>();
+        Console.WriteLine($"Test Case 2: [{{(}}]");
+        Console.WriteLine("Expected: False.");
+        Console.WriteLine($"Actual: {ValidateParenthesis("[{(}]")}.");
+        Console.WriteLine();
+        Console.WriteLine();
 
-            Console.WriteLine("Pushing elements:");
-            for (int i = 1; i <= 10; i++)
-            {
-                intStack.Push(i);
-                Console.WriteLine($"Pushed: {i}, Top: {intStack.Top()}");
-            }
+        Console.WriteLine("Reverse a string using stack: ");
+        Console.WriteLine("Test Case 1: \"Tamer\"");
+        Console.WriteLine("Expected: \"remaT\"");
+        Console.WriteLine($"Actual: \"{Reverse("Tamer")}\"");
 
-            
-            Console.WriteLine("\n============");
-            Console.Write(intStack);
-            Console.WriteLine("============");
+        Console.WriteLine();
+        Console.WriteLine();
 
+    }
+    private static bool IsOpenParenthesis(char character)
+    {
+        return character == '(' || character == '{' || character == '[';
+    }
 
-            Console.WriteLine("\nPopping elements:");
-            while (!intStack.IsEmpty())
-                Console.WriteLine($"Popped: {intStack.Pop()}");
+    public static bool ValidateParenthesis(string expression)
+    {
+        LinkedStack<char> stack = new LinkedStack<char>();
 
-            Console.WriteLine("\nStack empty? " + intStack.IsEmpty());
+        foreach(char character in expression)
+            if (IsOpenParenthesis(character))
+                stack.Push(character);
+            else if (!IsOpenParenthesis(character) && (stack.Top() == '{' && character == '}'))
+                stack.Pop();
+            else if (!IsOpenParenthesis(character) && (stack.Top() == '[' && character == ']'))
+                stack.Pop();
+            else if (!IsOpenParenthesis(character) && (stack.Top() == '(' && character == ')'))
+                stack.Pop();
+            else
+                return false;
 
-            // Uncomment to test popping from empty stack
-            // intStack.Pop();
+        return stack.IsEmpty();
+    }
 
-            Console.WriteLine("\n=== Testing LinkedStack<string> ===");
-            LinkedStack<string> stringStack = new LinkedStack<string>();
-            stringStack.Push("First");
-            stringStack.Push("Second");
-            stringStack.Push("Third"); // triggers resize
-
-            Console.WriteLine($"Top element: {stringStack.Top()}");
-            Console.WriteLine($"Popped element: {stringStack.Pop()}");
-            Console.WriteLine($"Now top is: {stringStack.Top()}");
-
-            Console.WriteLine("\n=== Testing invalid stack creation ===");
-            try
-            {
-                var badStack = new LinkedStack<double>();
-            }
-            catch (InvalidDataException ex)
-            {
-                Console.WriteLine("Caught expected exception: " + ex.Message);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
-        }
+    public static string Reverse(string text)
+    {
+        ArrayStack<char> stack = new(text.Length);
+        foreach(char character in text)
+            stack.Push(character);
+        StringBuilder result = new();
+        while(!stack.IsEmpty())
+            result.Append(stack.Pop());
+        return result.ToString();
     }
 }
